@@ -172,7 +172,7 @@ function updateVisualization() {
         date_data.push([date_list[i], date_count[i]])
     }
 
-    console.log(date_data)
+    // console.log(date_data)
     
     const rects2 = g2.selectAll("rect").data(date_data)
 
@@ -186,7 +186,86 @@ function updateVisualization() {
     .attr("width", x2.bandwidth)
     .attr("height", d => teamHeight - y2(d[1]))
     .attr("transform", `translate(0, ${height/2 + teamMargin.top})`)
-    .attr("fill", "grey")
+    .attr("fill", "#DA70D6")
 
+}
+
+console.log(await findTopProductsByType("2021-03", "Hoodies"))
+
+async function findTopProducts(purchaseDate) {
+    const shoplist = await allie_data
+    console.log(purchaseDate)
+    let purchaseCount = []
+    let purchaseItem = []
+    let topMonthlyPurchase = ""
+    let purchases = shoplist.filter( function(d) {
+        if (d.TransactionType == 'product') {
+            return d
+        }
+    })
+    for (let i = 0; i < purchases.length; i++) {
+        // console.log(purchases[i].Date.slice(0, 7))
+        if (purchases[i].Date.slice(0, 7) == purchaseDate) {
+            if (purchaseItem.includes(purchases[i].Product)) {
+                let position = purchaseItem.indexOf(purchases[i].Product)
+                purchaseCount[position] = purchaseCount[position] + 1
+            }
+            else {
+                purchaseItem.push(purchases[i].Product)
+                purchaseCount.push(1)
+            }
+        }
+    }
+    let max_index = 0;
+    let array_max = 0;
+    for (let i = 0; i < purchaseCount.length; i ++) {
+        if (purchaseCount[i] > array_max) {
+            max_index = i;
+            array_max = purchaseCount[i]
+        }
+    }
+    console.log(purchaseItem[max_index])
+    topMonthlyPurchase = purchaseItem[max_index]
+
+    return topMonthlyPurchase
+}
+
+async function findTopProductsByType(purchaseDate, purchaseType) {
+    const shoplist = await allie_data
+    console.log(purchaseDate)
+    console.log(purchaseType)
+    let purchaseCount = []
+    let purchaseItem = []
+    let topMonthlyPurchase = ""
+    let purchases = shoplist.filter( function(d) {
+        if (d.TransactionType == 'product') {
+            return d
+        }
+    })
+    for (let i = 0; i < purchases.length; i++) {
+        // console.log(purchases[i].Date.slice(0, 7))
+        if (purchases[i].Date.slice(0, 7) == purchaseDate && purchases[i].ProductType == purchaseType) {
+            if (purchaseItem.includes(purchases[i].Product)) {
+                let position = purchaseItem.indexOf(purchases[i].Product)
+                purchaseCount[position] = purchaseCount[position] + 1
+            }
+            else {
+                purchaseItem.push(purchases[i].Product)
+                purchaseCount.push(1)
+            }
+        }
+    }
+    let max_index = 0;
+    let array_max = 0;
+    for (let i = 0; i < purchaseCount.length; i ++) {
+        if (purchaseCount[i] > array_max) {
+            max_index = i;
+            array_max = purchaseCount[i]
+        }
+    }
+    console.log(purchaseItem[max_index])
+    topMonthlyPurchase = purchaseItem[max_index]
+
+    return topMonthlyPurchase
 }
 
